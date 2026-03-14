@@ -1,3 +1,7 @@
 [submodule "part0"]
     path = part0
     url = https://github.com/chinsu70802/part0.git
+
+[submodule "part1"]
+    path = part1
+    url = https://github.com/chinsu70802/part1.git
