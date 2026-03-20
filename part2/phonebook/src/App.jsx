@@ -3,17 +3,17 @@ import axios from "axios"
 import Filter from './components/Filter.jsx'
 import PersonForm from './components/PersonForm.jsx'
 import Persons from './components/Persons.jsx'
+import phoneService from './services/phoneDir.js'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newPhone, setNewNumber] = useState('')
-  const [newID, setNewID] = useState('')
   const [newFilter, setNewFilter] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
+      phoneService
+      .getAll()
       .then(response => {
         setPersons(response.data)
       })
@@ -27,33 +27,40 @@ const App = () => {
     setNewNumber(event.target.value)
   } 
 
-  const onTypeID = (event) => {
-    setNewID(event.target.value)
-  }
-
   const onFilter = (event) => {
     setNewFilter(event.target.value)
   }
 
+  const onDelete = (person) => {
+    let result = confirm(`Delete ${person.name}?`)
+    if (result) {    
+      const id = person.id
+      phoneService
+      .deleteDir(id)
+      .then(() => {
+        setPersons(persons
+                  .filter((person) => person.id != id)
+        )
+    })}
+  }
+
   const onLogName = (event) => {
     event.preventDefault()
-    const found_name = persons.some((person) => (person.name === newName))
-    const found_phone = persons.some((person) => (person.number === newPhone))
-    const found_id = persons.some((person) => (person.id === newID))    
+    const found_name = persons.some((person) => (person.name.toLowerCase() === newName.toLowerCase()))
+    const found_phone = persons.some((person) => (person.number === newPhone))   
     if (found_name) {
-      console.log(newName)
-      alert(`${newName} already exists in the phonebook`)
-      setNewName('')
-    }
-    else if (found_phone) {
-      console.log(newPhone)
-      alert(`Phone number ${newPhone} already exists in the phonebook`)
-      setNewNumber('')      
-    }
-    else if (found_id){
-      console.log(newID)
-      alert(`ID ${newID} already exists in the phonebook`)
-      setNewID('')        
+      let result = confirm(`${newName} is already added to phonebook. Do you want to replace their phone number with the recently entered one?`)
+      if (result) {
+        const person = persons.find((person) => person.name.toLowerCase() == newName.toLowerCase())
+        const changedPerson = {...person, number: newPhone}
+        phoneService
+        .updateDir(changedPerson)
+        .then((response) => {
+          setPersons(persons.map((person) => person.name === newName ? response.data : person))
+          setNewName('')
+          setNewNumber('')
+        })
+      }   
     }
     else {
       if((newName === '')){
@@ -61,20 +68,20 @@ const App = () => {
       }
       else if((newPhone === '')){
         alert('Please fill phone number!')
-      }
-      else if((newID === '')){
-        alert('Please fill id!')
-      }      
+      }    
       else {
       const phoneObject = {
         name: newName,
         number: newPhone,
-        id: newID
+        id: persons.length > 0 ? (parseInt(persons[persons.length - 1].id,10) + 1).toString() : "1"
       }
-      setPersons(persons.concat(phoneObject))
-      setNewName('')
-      setNewNumber('')
-      setNewID('')
+      phoneService
+      .addNew(phoneObject)
+      .then(response => {
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+      })
     }
   }
 }
@@ -84,9 +91,9 @@ const App = () => {
       <h2>Search for specific contacts</h2>
       <Filter filter={newFilter} changeFunc = {onFilter}/>
       <h2>Add a new contact detail</h2>
-      <PersonForm name={newName} phone={newPhone} id={newID} logFunc={onLogName} nameFunc={onTypeName} numFunc={onTypeNumber} idFunc={onTypeID}/>
+      <PersonForm name={newName} phone={newPhone} logFunc={onLogName} nameFunc={onTypeName} numFunc={onTypeNumber}/>
       <h2>Your Phonebook</h2>
-      <Persons filter={newFilter} persons={persons}/>
+      <Persons filter={newFilter} persons={persons} onDelFunc={onDelete}/>
     </div>
   )
 }

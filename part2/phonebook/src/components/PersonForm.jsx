@@ -8,9 +8,6 @@ const PersonForm = (prop) => {
           number: <input value = {prop.phone} onChange={prop.numFunc}/>
         </div>
         <div>
-          id: <input value = {prop.id} onChange={prop.idFunc}/>
-        </div>
-        <div>
           <button type="submit">add</button>
         </div>
       </form>
