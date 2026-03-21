@@ -1,19 +1,44 @@
 {
   "persons": [
     {
-      "id": "1",
-      "name": "Rags",
-      "number": "123"
-    },
-    {
-      "id": "2",
-      "name": "rts",
-      "number": "456789"
-    },
-    {
       "id": "3",
-      "name": "vddsfasda",
-      "number": "12312541251542"
+      "name": "Rags",
+      "number": "12"
+    },
+    {
+      "id": "4",
+      "name": "Rag",
+      "number": "123124123"
+    },
+    {
+      "id": "5",
+      "name": "Raghavan",
+      "number": "123214213"
+    },
+    {
+      "id": "6",
+      "name": "Radha",
+      "number": "12312421412"
+    },
+    {
+      "id": "7",
+      "name": "Ramesh",
+      "number": "12421214123123"
+    },
+    {
+      "id": "8",
+      "name": "Srivatsan",
+      "number": "21312421321"
+    },
+    {
+      "id": "9",
+      "name": "Dhruva",
+      "number": "1231252342"
+    },
+    {
+      "id": "10",
+      "name": "Shruthi",
+      "number": "21412412312312"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

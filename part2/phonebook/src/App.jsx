@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import axios from "axios"
 import Filter from './components/Filter.jsx'
 import PersonForm from './components/PersonForm.jsx'
 import Persons from './components/Persons.jsx'
+import Notifications from './components/Notifications.jsx'
 import phoneService from './services/phoneDir.js'
 
 const App = () => {
@@ -10,6 +10,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newPhone, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [newMessage, setNewMessage] = useState(null)
+  const [newStyle, setNewStyle] = useState(null)
 
   useEffect(() => {
       phoneService
@@ -41,6 +43,15 @@ const App = () => {
         setPersons(persons
                   .filter((person) => person.id != id)
         )
+        setNewStyle({
+          color: 'green',
+          fontStyle: 'italic',
+          textAlign: 'center'
+        })
+        setNewMessage(`Deleted ${person.name} from your phone directory!`)
+        setTimeout(() => {
+          setNewMessage(null)
+        }, 5000)
     })}
   }
 
@@ -59,6 +70,26 @@ const App = () => {
           setPersons(persons.map((person) => person.name === newName ? response.data : person))
           setNewName('')
           setNewNumber('')
+          setNewStyle({
+            color: 'green',
+            fontStyle: 'italic',
+            textAlign: 'center'
+          })
+          setNewMessage(`Updated ${newName}'s details!`)
+          setTimeout(() => {
+            setNewMessage(null)
+          }, 5000)
+        })
+        .catch(() => {
+          setNewStyle({
+            color: 'red',
+            fontStyle: 'italic',
+            textAlign: 'center'
+          })
+          setNewMessage(`${newName} has already been deleted from the server :(`)
+          setTimeout(() => {
+            setNewMessage(null)
+          }, 5000)
         })
       }   
     }
@@ -81,6 +112,15 @@ const App = () => {
         setPersons(persons.concat(response.data))
         setNewName('')
         setNewNumber('')
+        setNewStyle({
+          color: 'green',
+          fontStyle: 'italic',
+          textAlign: 'center'
+        })
+        setNewMessage(`Added ${newName} to your phone directory!`)
+        setTimeout(() => {
+          setNewMessage(null)
+        }, 5000)
       })
     }
   }
@@ -88,6 +128,7 @@ const App = () => {
 
   return (
     <div>
+      <Notifications message={newMessage} notifStyle={newStyle}/>
       <h2>Search for specific contacts</h2>
       <Filter filter={newFilter} changeFunc = {onFilter}/>
       <h2>Add a new contact detail</h2>
